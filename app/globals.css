@@ -10,28 +10,11 @@
 }
 
 @layer base {
-  h1{
-    font-size: 40px;
-    font-weight: bold;
-    line-height: 52px;
-  }
-  h2{
-    font-size: 32px;
-    font-weight: 600;
-    line-height: 44px;
-  }
-  h3{
-    font-size: 24px;
-    font-weight: 600;
-    line-height: 36px;
-  }
-  h4{
-    font-size: 18px;
-    font-weight: 500;
-    line-height: 28px;
-  }
   input { 
     outline: none!important;
+  }
+  button{
+    cursor: pointer;
   }
 }
 /* Helper classes */
