@@ -38,6 +38,7 @@ export default function RegisterPage() {
         })
         if(!response.ok) throw new Error ('Somethings went wrong')
           const result = await response.json()
+          
           console.log(result)
       } catch (error) {
         console.log(error)
