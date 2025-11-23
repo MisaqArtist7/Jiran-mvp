@@ -1,8 +1,10 @@
 'use client'
 import Link from "next/link"
+import Image from "next/image"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { useState } from "react"
 
 const registerSchema = z.object({
   name: z.string().min(8, { message: 'Name must be at least 8 characters' })
@@ -24,7 +26,7 @@ const registerSchema = z.object({
   type registerFormInputs = z.infer< typeof registerSchema >
 
 export default function RegisterPage() {
-
+    const [showPassword, setShowPassword] = useState(false)
     const {register, handleSubmit, formState: { errors } } = useForm<registerFormInputs>({
       resolver: zodResolver(registerSchema)
     })
@@ -67,11 +69,11 @@ export default function RegisterPage() {
                 <use href="#keyIcon"></use>
             </svg>
             <input {...register('password')}
-            type="password" id="password" placeholder="Enter your password" className="w-full pl-2" />
+            type={showPassword ? 'text' : 'password'} id="password" placeholder="Enter your password" className="w-full pl-2" />
           </div>
-          {/* <button type="button" onClick={e => { e.preventDefault(); setShowPassword(prev => !prev) }} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500">
+          <button type="button" onClick={e => { e.preventDefault(); setShowPassword(prev => !prev) }} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500">
             <Image src={showPassword ? '/images/close.svg' : '/images/open.svg'} width={25} height={25} alt="toggle visibility" />
-            </button> */}
+          </button>
         </div>
           {errors.password && (<p className="text-red-600 text-sm">{errors.password.message}</p>)}
 
