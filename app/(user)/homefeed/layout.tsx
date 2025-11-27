@@ -1,10 +1,10 @@
-import { Metadata } from "next"
-
+import React from "react";
+import { Metadata } from "next";
 export const metadata : Metadata = {
-    title: 'Home feed | Jiran',
+    title: '',
     description: ''
 }
-export default function HomeFeedLayout({children} : {children : React.ReactNode}){
+export default function HomeFeedLayout( {children} : {children : React.ReactNode} ){
     return(
         <main>
             {children}

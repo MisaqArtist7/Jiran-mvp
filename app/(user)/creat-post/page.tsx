@@ -102,7 +102,10 @@ export default function CreatPostPage() {
               </div>
 
             </div>
+            <div className="flex items-center justify-center gap-3">
+              <button className="text-xl w-full cursor-pointer mt-6  hover:text-white py-2 rounded-md transition border-2 border-red-600 hover:bg-red-600">Cancel</button>
               <button className="text-xl w-full cursor-pointer mt-6  hover:text-white py-2 rounded-md transition border-2 border-(--primaryColor) hover:bg-(--primaryColor)">Submit</button>
+            </div>
           </form>
         </div>
 
