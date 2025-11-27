@@ -10,7 +10,7 @@
 }
 
 @layer base {
-  input, textarea { 
+  input, textarea, select { 
     outline: none!important;
   }
   button{
