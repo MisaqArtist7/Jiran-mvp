@@ -1,11 +1,8 @@
-'use client'
 import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
 export default function HoomFeedPage() {
-  const [modal, setModal] = useState(false)
   return (
-    <section className="relative ">
+    <section className="relative">
       {/* homefeed section */}
       <div className="relative flex justify-between">
         {/* asside section */}
@@ -114,66 +111,6 @@ export default function HoomFeedPage() {
           </div>
         </div>
       </div>
-
-      {/* modal button */}
-      <div onClick={() => setModal((prevState) => !prevState)}
-      className="fixed bottom-7 bg-(--primaryColor) right-7 text-white rounded-full p-3 cursor-pointer">
-        <svg className="w-9 h-9">
-          <use href="#addIcon"></use>
-        </svg>
-      </div>
-
-      {/* modal section */}
-      {modal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center px-4">
-          <div className="bg-white p-5 rounded-lg w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold">Create Post</h2>
-              <button onClick={() => setModal((prevState) => !prevState)}>
-                <svg className="w-7 h-7">
-                  <use href="#closeIcon"></use>
-                </svg>
-              </button>
-            </div>
-            <form action="">
-              <input
-                type="text"
-                placeholder="Title: for example: car"
-                className="w-full border-2 border-gray-300 outline-none hover:border-(--primaryColor) p-2 rounded-lg mb-3"
-              />
-
-              <textarea
-                placeholder="Description..."
-                className="w-full border-2 border-gray-300 outline-none hover:border-(--primaryColor) p-2 rounded-lg mb-3"
-                rows={3}
-              />
-
-              <input
-                type="text"
-                placeholder="Address..."
-                className="w-full border-2 border-gray-300 outline-none hover:border-(--primaryColor) p-2 rounded-lg mb-3"
-              />
-
-              <input
-                type="file"
-                accept="image/*"
-                className="mb-3"
-              />
-              <select className="w-full border-2 border-gray-300 p-2 hover:border-(--primaryColor) rounded-lg mb-4 outline-none " >
-                <option value="">Select category</option>
-                <option value="stolen">stolen</option>
-                <option value="lost">lost</option>
-              </select>
-            </form>
-
-            <button className="w-full bg-(--primaryColor)/90 hover:bg-(--primaryColor) text-white py-2 rounded-lg cursor-pointer">
-              Post
-            </button>
-
-          </div>
-        </div>
-      )}
-
     </section>
   )
 }
