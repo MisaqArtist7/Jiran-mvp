@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 export default function HomeFeedPage() {
   return (
-        <section className=''>
+    <section className=''>
       <div>
         <aside className="shadow bg-white border border-gray-100 min-w-72 px-4 py-7 fixed left-0 bottom-0 top-0">
           <div>
