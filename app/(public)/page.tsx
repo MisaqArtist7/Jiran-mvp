@@ -1,5 +1,7 @@
 export default function HomePage() {
   return (
-    <div className="flex-row-center min-h-screen text-3xl">page</div>
+    <div className="flex-col-center min-h-screen text-3xl">
+      home page
+    </div>
   )
 }
