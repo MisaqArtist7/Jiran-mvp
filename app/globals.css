@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@import "leaflet/dist/leaflet.css";
 :root {
   --background: rgb(247, 244, 244) ;  /* FCEFE9 F7F7FC*/
   --primaryColor: #007BFF; /* Titles/Links 007BFF */

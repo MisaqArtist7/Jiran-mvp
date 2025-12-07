@@ -1,8 +1,11 @@
   'use client'
   import Image from 'next/image'
   import Link from 'next/link'
-  import { useEffect, useState } from 'react'
+  import { SetStateAction, useEffect, useState } from 'react'
   import { useRouter } from "next/navigation"
+  import SimpleMap from '@/src/components/shared/map/SimpleMap'
+  import LocationPicker from '@/src/components/shared/locationPicker/locationPicker'
+  import "leaflet/dist/leaflet.css";
 
   export default function DashboardEdit() {
     const router = useRouter()
@@ -10,6 +13,8 @@
     const [bio, setBio] = useState('')
     const [newBio, setNewBio] = useState('')
     const [enteredGender, setEnteredGender] = useState<string>('');
+    const [latitude, setLatitude] = useState('')
+    const [longitude, setLongitude] = useState('')
     const options = ['Male', 'Female'];
     // Social links states for each platform
     const [telegramId, setTelegramId] = useState('')
@@ -34,14 +39,18 @@
             return;
           }
           const data = await response.json()
+          console.log('Given data is =>', data.data)
           const userData = data.data
           const userProfile = data.data.profile_data
-
+          setLatitude(String(userData['loc-lat']))
+          setLongitude(String(userData['loc-lng']))
           setName(userData.name)
           setBio(userProfile.bio)
           setNewBio(userProfile.bio)
           setEnteredGender(userProfile.gender || '')
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           setTelegramId(userProfile.social_links?.find((l: any) => l.platform === 'telegram')?.url || '')
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           setInstagramId(userProfile.social_links?.find((l: any) => l.platform === 'instagram')?.url || '')
         } catch(error) {
           console.log(error)
@@ -205,12 +214,12 @@
             <div className='flex flex-col items-center justify-between gap-4 mb-3'>
               <div className='flex items-center justify-between w-full gap-4'>
                 <div className='flex flex-col justify-center w-full'>
-                  <label htmlFor="">German</label>
-                  <input type="text" placeholder='32.6545' className='w-full p-2 rounded border-2 border-gray-200 hover:border-(--primaryColor)'/>
+                  <label htmlFor="">Latitude</label>
+                  <input type="text" placeholder={`${latitude}`} className='w-full p-2 rounded border-2 border-gray-200 hover:border-(--primaryColor)'/>
                 </div>
                 <div className='flex flex-col justify-center w-full'>
-                  <label htmlFor="">Berlin</label>
-                  <input type="text" placeholder='32.6545' className='w-full p-2 rounded border-2 border-gray-200 hover:border-(--primaryColor)'/>
+                  <label htmlFor="">Longitude</label>
+                  <input type="text" placeholder={`${longitude}`} className='w-full p-2 rounded border-2 border-gray-200 hover:border-(--primaryColor)'/>
                 </div>
               </div>
               <div className='flex flex-col justify-center w-full'>
@@ -221,6 +230,17 @@
                 <label htmlFor="">Postal Code</label>
                 <input type="text" placeholder='0123456789' className='w-full p-2 rounded border-2 border-gray-200 hover:border-(--primaryColor)'/>
               </div>
+                <div className="h-[303px] border border-gray-200 rounded w-full overflow-hidden">
+                <LocationPicker
+                  defaultLat={Number(latitude)}
+                  defaultLng={Number(longitude)}
+                  
+                  onChange={(lat: unknown, lng: unknown) => {
+                    setLatitude(String(lat))
+                    setLongitude(String(lng))
+                  }}
+                    />  
+              </div>
             </div>
             <div className='flex items-center justify-center gap-2'>
               <button className='text-xl w-full cursor-pointer text-red-600 hover:text-white py-2 rounded transition border-2 border-red-600 hover:bg-red-600'>Discard</button>
@@ -230,34 +250,17 @@
           
         </div>
       </div>
-            <div className="bg-white shadow p-3 px-7 mx-3 ml-76 my-4">
+      <div className="bg-white shadow p-3 px-7 ml-76 my-4">
         <h2 className="flex items-center py-3 text-xl text-red-600">
           <svg className='w-9 h-9'>
             <use href='#locIcon'></use>
           </svg>
-          Your Location
+          Your already Location
         </h2>
-        <div className="flex justify-between items-center">
-          <form action="" className='w-full'>
-            <div className='flex items-center justify-between gap-4'>
-              <div className='flex flex-col justify-center w-full'>
-                <label htmlFor="">Latitude</label>
-                <input type="text" placeholder='32.6545' className='w-full p-2 rounded border-2 border-gray-200 hover:border-(--primaryColor)'/>
-              </div>
-              <div className='flex flex-col justify-center w-full'>
-                <label htmlFor="">Longitude</label>
-                <input type="text" placeholder='32.6545' className='w-full p-2 rounded border-2 border-gray-200 hover:border-(--primaryColor)'/>
-              </div>
-            </div>
-            <div className='flex-row-center h-[222px] border border-gray-200 my-3'>
-              map
-            </div>
-            <div className='flex items-center justify-center gap-2'>
-              <button className='text-xl w-full cursor-pointer text-red-600 hover:text-white py-2 rounded transition border-2 border-red-600 hover:bg-red-600'>Discard</button>
-              <button className='text-xl w-full cursor-pointer text-white py-2 rounded transition border-2 border-(--primaryColor) bg-(--primaryColor)/90 hover:bg-(--primaryColor)'>Change Location</button>
-            </div>
-          </form>
-
+        <div className="flex justify-between items-center w-full">
+          <div className="h-[303px] border border-gray-200 rounded w-full">
+            <SimpleMap lat={Number(latitude)} lng={Number(longitude)} />
+          </div>
         </div>
       </div>
       </section>
