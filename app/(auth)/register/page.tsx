@@ -26,19 +26,21 @@ const registerSchema = z.object({
   type registerFormInputs = z.infer< typeof registerSchema >
   
   type registerPayload = registerFormInputs & {
-    location: { lat: number; lng: number } | null
+     loc_lat?: number | null, 
+     loc_lng?: number | null, 
   };
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [pending, setPending] = useState(false)
-  const {register, handleSubmit, setError, formState: { errors } } = useForm<registerFormInputs>({
+  const {register, handleSubmit, formState: { errors } } = useForm<registerFormInputs>({
     resolver: zodResolver(registerSchema)
   })
 
-  const onsubmit = async (data: registerFormInputs) => {  
+  const sendDataToServer = async (data: registerFormInputs) => {  
     setPending(true)
+    
     const sendToServer = async (finalData : registerPayload) => {
       try {
         const response = await fetch('https://jiran-api.com/api/v1/auth/register', {
@@ -46,7 +48,11 @@ export default function RegisterPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(finalData),
         });
-        if (!response.ok) throw new Error('Something went wrong');
+        if (!response.ok) {
+          const errorBody = await response.json();
+          console.log(errorBody);
+          return;
+        }
         const result = await response.json();
         console.log(result);
 
@@ -62,12 +68,13 @@ export default function RegisterPage() {
         const { latitude, longitude } = pos.coords;
         const finalData = {
           ...data,
-          location: { lat: latitude, lng: longitude },
+          loc_lat: latitude,
+          loc_lng: longitude,
         };
         await sendToServer(finalData);
       },
       async () => {
-        const finalData = { ...data, location: null };
+        const finalData = { ...data };
         await sendToServer(finalData);
       }
     );
@@ -75,7 +82,7 @@ export default function RegisterPage() {
 
     return (
     <section className="flex flex-col items-center justify-center min-h-screen p-4">
-      <form onSubmit={handleSubmit(onsubmit)} className="bg-white p-8 rounded-md shadow-md w-full max-w-sm">
+      <form onSubmit={handleSubmit(sendDataToServer)} className="bg-white p-8 rounded-md shadow-md w-full max-w-sm">
         <h2 className="text-2xl font-bold mb-6 text-center">Create an account</h2>
         {/* Name */}
         <label htmlFor="FullName" className="block mb-1 font-medium">Full Name</label>

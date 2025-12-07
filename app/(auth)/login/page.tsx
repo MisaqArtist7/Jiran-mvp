@@ -5,10 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
-const registerSchema = z.object({
-  name: z.string().min(8, { message: 'Name must be at least 8 characters' })
-  .regex(/^[a-zA-Z\s]+$/, { message: 'Name may only contain letters and spaces.' }),
+const loginSchema = z.object({
   email: z.email( { message: 'Invalid email address' } ),
   password: z
     .string()
@@ -16,30 +15,34 @@ const registerSchema = z.object({
     .regex(/[A-Z]/, { message: 'Password must include at least one uppercase letter' })
     .regex(/[0-9]/, { message: 'Password must include at least one number' })
     .regex(/[^A-Za-z0-9]/, { message: 'Password must include at least one symbol (e.g. @, #, !)' }),
-    password_confirmation: z.string(),
   })
-  .refine((data) => data.password === data.password_confirmation, {
-    message: "Passwords don't match",
-    path: ['password_confirmation'],
-  });
 
-  type registerFormInputs = z.infer< typeof registerSchema >
+  type registerFormInputs = z.infer< typeof loginSchema >
 
-export default function RegisterPage() {
+  export default function RegisterPage() {
+  const router = useRouter()
     const [showPassword, setShowPassword] = useState(false)
     const {register, handleSubmit, formState: { errors } } = useForm<registerFormInputs>({
-      resolver: zodResolver(registerSchema)
+      resolver: zodResolver(loginSchema)
     })
 
-    const onsubmit = async (data : registerFormInputs) => {
+    const sendDataToServer = async (data : registerFormInputs) => {
       try{
-        const response = await fetch('https://jiran-api.com/api/v1/auth/register', {
+        const response = await fetch('https://jiran-api.com/api/v1/auth/login', {
           method: 'POST',
           body: JSON.stringify(data),
-          headers: { 'Content-type': 'application/json', }
+          headers: { 'Content-Type': 'application/json', }
         })
-        if(!response.ok) throw new Error ('Somethings went wrong')
+        if(!response.ok) {
+          const errorBody = await response.json();
+          console.log(errorBody);
+          return;
+        }
           const result = await response.json()
+          router.push('/dashboard')
+          const token = result.data.token
+          console.log(token)
+          localStorage.setItem('token', token)
           console.log(result)
       } catch (error) {
         console.log(error)
@@ -48,7 +51,7 @@ export default function RegisterPage() {
 
     return (
     <section className="flex flex-col items-center justify-center min-h-screen p-4">
-      <form onSubmit={handleSubmit(onsubmit)} className="bg-white p-8 rounded-md shadow-md w-full max-w-sm">
+      <form onSubmit={handleSubmit(sendDataToServer)} className="bg-white p-8 rounded-md shadow-md w-full max-w-sm">
         <h2 className="text-2xl font-bold mb-6 text-center">Create an account</h2>
         {/* Email */}
         <label htmlFor="email" className="block mt-4 mb-1 font-medium">Email</label>
