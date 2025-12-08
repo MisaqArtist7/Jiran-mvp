@@ -120,9 +120,6 @@ export default function DashboardPage() {
                     <span className="text-gray-800">{` ${gender === null ? 'It hasn\t been entered' : `${gender}`} `}</span>
                   </h3> 
                   <span className="flex items-center gap-1">Social active media:
-                    {/* {socialLinks.map((item: any) => (
-                      <h1 key={item.id}></h1>
-                    ))} */}
                     {Array.isArray(socialLinks) && 
                       socialLinks.map((item) => {
                         console.log(item)

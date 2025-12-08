@@ -4,7 +4,7 @@
   import { useEffect, useState } from 'react'
   import { useRouter } from "next/navigation"
   import SimpleMap from '@/src/components/shared/map/SimpleMap'
-  import LocationPicker from '@/src/components/shared/locationPicker/locationPicker'
+  // import LocationPicker from '@/src/components/shared/locationPicker/locationPicker'
   import "leaflet/dist/leaflet.css";
 
   export default function DashboardEdit() {
@@ -18,8 +18,8 @@
     const options = ['Male', 'Female'];
     // Social links states for each platform
     const [telegramId, setTelegramId] = useState('')
-    const [instagramId, setInstagramId] = useState('')
-
+    const [instagramId, setInstagramId] = useState('')  
+    const [profileModal, setProfileModal] = useState(false)
     useEffect(() => {
       const token = localStorage.getItem("token")
       if (!token) router.push("/register")
@@ -113,9 +113,18 @@
       console.log(longitude)
     }
 
-      
+    const [profilePreview, setProfilePreview] = useState<string | null>(null)
+    const handleFile = (e : React.ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault()
+      const file = e.target.files?.[0];
+      if(!file) return
+
+      const url = URL.createObjectURL(file)
+      setProfilePreview(url)
+    }
+       
       return (
-      <section>
+      <section className='relative'>
         <aside className="shadow bg-white border border-gray-100 min-w-72 px-4 py-7 fixed left-0 bottom-0 top-0">
           <div>
             <h1 className="text-2xl font-semibold pb-2 px-1">Edit Dashboard</h1>
@@ -136,7 +145,15 @@
             Personal Information
           </h2>
           <div className='flex items-center gap-4'>
-            <Image src="/images/Avatar.png" height={136} width={136} alt="Avatar" className='hover:cursor-pointer'/>
+            <div onClick={() => setProfileModal((prevState) => !prevState)}>
+              {profilePreview ? (
+                <div className='w-36 h-36 rounded-full flex-row-center'>
+                  <Image src={profilePreview} height={133} width={133} alt="Avatar" className='hover:cursor-pointer w-full h-full object-cover rounded-full'/>
+                </div>
+              ) : (
+                  <Image src="/images/Avatar.png" height={136} width={136} alt="Avatar" className='hover:cursor-pointer'/>
+              )}
+            </div>
             <div>
               <h2 className="text-2xl font-semibold">{name}</h2>
               <div className="flex items-center gap-2">
@@ -265,11 +282,42 @@
           Your already Location
         </h2>
         <div className="flex justify-between items-center w-full">
-          <div className="h-[303px] border border-gray-200 rounded w-full">
+          <div className="h-[303px] border border-gray-200 rounded w-full z-20">
             <SimpleMap lat={Number(latitude)} lng={Number(longitude)} />
           </div>
         </div>
       </div>
+      {/* Add profile module */}
+      {profileModal && (
+        <div>
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-white shadow  w-xl rounded">
+              <div className='flex items-center justify-between bg-(--primaryColor) text-white text-2xl font-semibold py-3 px-6'>
+                <h2 className=''>Add profile</h2>
+                <span onClick={() => setProfileModal((prevState) => !prevState)} className='cursor-pointer'>
+                  <svg className='w-8 h-8'>
+                    <use href='#closeIcon'></use>
+                  </svg>
+                </span>
+              </div>
+              {/* body */}
+              <form className='flex-col-center h-full'>
+                <div className='text-gray-500 flex-row-center px-11 py-4'>
+                  {profilePreview ? (
+                    <Image src={profilePreview} width={333} height={333} alt={profilePreview} className='w-full h-full object-cover'></Image>
+                  ) 
+                  : (
+                    <span>no picture has chosen yet</span>
+                  )}
+                </div>
+                <input type="file" onChange={handleFile} className='block flex-row-center p-2 rounded border-2 border-gray-200 hover:border-(--primaryColor) cursor-alias' />
+                <button className='text-xl mb-4 px-11 cursor-pointer mt-6 text-white py-2 rounded-md transition bg-(--primaryColor)'>Send</button>
+              </form>
+            </div>
+          </div>
+          <div className='overlay absolute bg-black/36 top-0 left-0 bottom-0 right-0 z-40'> </div>
+        </div>
+      )}
       </section>
     )
   }
