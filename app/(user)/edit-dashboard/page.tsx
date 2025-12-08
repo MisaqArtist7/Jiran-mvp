@@ -1,7 +1,7 @@
   'use client'
   import Image from 'next/image'
   import Link from 'next/link'
-  import { SetStateAction, useEffect, useState } from 'react'
+  import { useEffect, useState } from 'react'
   import { useRouter } from "next/navigation"
   import SimpleMap from '@/src/components/shared/map/SimpleMap'
   import LocationPicker from '@/src/components/shared/locationPicker/locationPicker'
@@ -104,7 +104,15 @@
       } catch(error) {
         console.log(error)
       }
-   }
+    }
+    
+    const addressHandler = (e) => {
+      e.preventDefault()
+      console.log("given data is: ", e)
+      console.log(latitude)
+      console.log(longitude)
+    }
+
       
       return (
       <section>
@@ -204,13 +212,13 @@
           </form>
         </div>
 
-              <div className="bg-white shadow p-3 px-7 mx-3 ml-76 my-4">
+      <div className="bg-white shadow p-3 px-7 mx-3 ml-76 my-4">
         <h2 className="flex items-center py-3 text-xl text-red-600">
           <Image src='images/address.svg' height={22} width={22} alt=''></Image>
           Your Address
         </h2>
         <div className="flex justify-between items-center">
-          <form action="" className='w-full'>
+          <form action="" onSubmit={addressHandler} className='w-full'>
             <div className='flex flex-col items-center justify-between gap-4 mb-3'>
               <div className='flex items-center justify-between w-full gap-4'>
                 <div className='flex flex-col justify-center w-full'>
@@ -230,17 +238,16 @@
                 <label htmlFor="">Postal Code</label>
                 <input type="text" placeholder='0123456789' className='w-full p-2 rounded border-2 border-gray-200 hover:border-(--primaryColor)'/>
               </div>
-                <div className="h-[303px] border border-gray-200 rounded w-full overflow-hidden">
-                <LocationPicker
-                  defaultLat={Number(latitude)}
-                  defaultLng={Number(longitude)}
-                  
-                  onChange={(lat: unknown, lng: unknown) => {
-                    setLatitude(String(lat))
-                    setLongitude(String(lng))
-                  }}
-                    />  
-              </div>
+                {/* <div className="h-[303px] border border-gray-200 rounded w-full overflow-hidden">
+                    <LocationPicker
+                      defaultLat={Number(latitude)}
+                      defaultLng={Number(longitude)}
+                      onChange={(newLat, newLng) => {
+                        setLatitude(String(newLat))
+                        setLongitude(String(newLng))
+                      }}
+                    />
+              </div> */}
             </div>
             <div className='flex items-center justify-center gap-2'>
               <button className='text-xl w-full cursor-pointer text-red-600 hover:text-white py-2 rounded transition border-2 border-red-600 hover:bg-red-600'>Discard</button>

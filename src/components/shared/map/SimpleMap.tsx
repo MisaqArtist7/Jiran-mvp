@@ -14,7 +14,7 @@ export default function SimpleMap({ lat, lng }) { // import in page
     <MapContainer
       key={`${lat}-${lng}`}        
       center={[lat, lng]}
-      zoom={15}                   
+      zoom={17}                   
       style={{ width: "100%", height: "100%" }}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
