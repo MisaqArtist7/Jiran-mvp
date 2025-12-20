@@ -15,7 +15,7 @@
     const [enteredGender, setEnteredGender] = useState<string>('');
     const [latitude, setLatitude] = useState('')
     const [longitude, setLongitude] = useState('')
-    const options = ['Male', 'Female'];
+    const options = ['Male', 'Female']; 
     // Social links states for each platform
     const [telegramId, setTelegramId] = useState('')
     const [instagramId, setInstagramId] = useState('')  
@@ -42,6 +42,7 @@
           console.log('Given data is =>', data.data)
           const userData = data.data
           const userProfile = data.data.profile_data
+          console.log(userProfile.bio)
           setLatitude(String(userData['loc-lat']))
           setLongitude(String(userData['loc-lng']))
           setName(userData.name)
@@ -69,18 +70,16 @@
     }
 
       // Build social_links array
-      const socialLinks = []
-      if (telegramId) socialLinks.push({ platform: 'telegram', url: `https://t.me/${telegramId}` })
-      if (instagramId) socialLinks.push({ platform: 'instagram', url: `https://instagram.com/${instagramId}` })
+      // const socialLinks = []
+      // if (telegramId) socialLinks.push({ platform: 'telegram', url: `https://t.me/${telegramId}` })
+      // if (instagramId) socialLinks.push({ platform: 'instagram', url: `https://instagram.com/${instagramId}` })
 
       const payload = {
-      bio: newBio,
-      gender: enteredGender.toLowerCase(),
-      social_links: [
-        telegramId ? { platform: 'telegram', url: telegramId } : null,
-        instagramId ? { platform: 'instagram', url: instagramId } : null
-      ].filter(Boolean)
-    }
+        bio: newBio,
+        gender: enteredGender.toLowerCase(),
+        // social_links: socialLinks     
+      }
+
 
         try {
           const response = await fetch('https://jiran-api.com/api/v1/auth/edit-profile', {
@@ -108,12 +107,14 @@
     
     const addressHandler = (e) => {
       e.preventDefault()
-      console.log("given data is: ", e)
-      console.log(latitude)
-      console.log(longitude)
+      // console.log("given data is: ", e)
+      // console.log(latitude)
+      // console.log(longitude)
     }
 
     const [profilePreview, setProfilePreview] = useState<string | null>(null)
+    const [profileFile, setProfileFile] = useState<File | null>(null)
+
     const handleFile = (e : React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault()
       const file = e.target.files?.[0];
@@ -121,9 +122,39 @@
 
       const url = URL.createObjectURL(file)
       setProfilePreview(url)
+      setProfileFile(file)
+      console.log("file =>", file)
+      console.log("src =>", url)
     }
-       
-      return (
+
+
+    const profileHandler = async (e) => {
+      const token = localStorage.getItem('token')
+      const formData = new FormData()
+      formData.append('avatar_patch', profileFile)
+      e.preventDefault()
+      try { 
+        const response = await fetch('https://jiran-api.com/api/v1/auth/edit-profile', 
+          {
+            method: 'POST',
+            headers: { 
+              Authorization: `Bearer ${token}`
+            },
+            body: formData,
+          }
+          )
+          if(!response.ok) {
+            const errorBody = await response.json()
+            console.log('something is wrong', errorBody)
+            return
+          }
+      } catch(error) {
+        console.log(error)
+      } finally {
+        setProfileModal(false)
+      }
+    } 
+      return ( 
       <section className='relative'>
         <aside className="shadow bg-white border border-gray-100 min-w-72 px-4 py-7 fixed left-0 bottom-0 top-0">
           <div>
@@ -301,7 +332,7 @@
                 </span>
               </div>
               {/* body */}
-              <form className='flex-col-center h-full'>
+              <form onSubmit={profileHandler} className='flex-col-center h-full'>
                 <div className='text-gray-500 flex-row-center px-11 py-4'>
                   {profilePreview ? (
                     <Image src={profilePreview} width={333} height={333} alt={profilePreview} className='w-full h-full object-cover'></Image>

@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useState } from "react"
-
+import { config } from "@/src/config/config"
 const registerSchema = z.object({
   name: z.string().min(8, { message: 'Name must be at least 8 characters' })
   .regex(/^[a-zA-Z\s]+$/, { message: 'Name may only contain letters and spaces.' }),
@@ -34,6 +34,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [pending, setPending] = useState(false)
+  
   const {register, handleSubmit, formState: { errors } } = useForm<registerFormInputs>({
     resolver: zodResolver(registerSchema)
   })
@@ -43,7 +44,7 @@ export default function RegisterPage() {
     
     const sendToServer = async (finalData : registerPayload) => {
       try {
-        const response = await fetch('https://jiran-api.com/api/v1/auth/register', {
+        const response = await fetch(`${config.apiAuthUrl}/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(finalData),
@@ -54,7 +55,6 @@ export default function RegisterPage() {
           return;
         }
         const result = await response.json();
-        console.log(result);
 
       } catch (error) {
         console.log(error);
