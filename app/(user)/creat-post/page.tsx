@@ -7,8 +7,10 @@ export default function CreatPostPage() {
   const [description, setDescription] = useState('')
   const [latitude, setLatitude] = useState('')
   const [longitude, setLongitude] = useState('')
+
   useEffect(() => {
     const token = localStorage.getItem('token')
+    if (!token) return;
     const fetchData = async () => {
       try {
         const response = await fetch('https://jiran-api.com/api/v1/auth/show', 
@@ -22,8 +24,8 @@ export default function CreatPostPage() {
         if (!response.ok) throw new Error('Something went wrong')
           const data = await response.json()
           const userData = data.data
-          setLatitude(String(userData['loc-lat'])) 
-          setLongitude(String(userData['loc-lng']))
+          setLatitude(userData['loc-lat']) 
+          setLongitude(userData['loc-lng'])
           console.log(data)
       } catch (error) {
         console.log(error)
@@ -32,29 +34,30 @@ export default function CreatPostPage() {
     fetchData()
   }, [])
 
-  const [preview, setPreview] = useState<string | null>(null);
-
+  const [preview, setPreview] = useState<string | null>(null)
+  const [file, setFile] = useState<File | null>(null);
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    const url = URL.createObjectURL(file);
-    setPreview(url);
+    setFile(file)
+    setPreview(URL.createObjectURL(file));
   };
-  const handleSubmit = async () => {
+
+  const handleSubmit = async (e : React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const token = localStorage.getItem('token')
     const formData = new FormData()
     formData.append('title', title)
     formData.append('content', description)
     formData.append('latitude', latitude)
     formData.append('longitude', longitude)
+    if (file) formData.append('images', file);
     try {
       const sendData = async () => {
         const response = await fetch('https://jiran-api.com/api/v1/create-post', 
           {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`
             },
             body: formData
@@ -66,7 +69,13 @@ export default function CreatPostPage() {
         console.log(error)
       }
   }
-
+  const cancelHandler = () => {
+    setTitle('')
+    setDescription('')
+    setLatitude('')
+    setLongitude('')
+    setPreview(null)
+  }
   return (
     <section>
       <div>
@@ -120,6 +129,7 @@ export default function CreatPostPage() {
                   <label className="text-xl">Title:</label>
                   <input
                     type="text"
+                    value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     className="w-full p-2 rounded border-2 border-gray-200 hover:border-(--primaryColor)"
                     placeholder="for example: car"
@@ -138,14 +148,12 @@ export default function CreatPostPage() {
                 </div>
                 <div className="flex flex-col gap-1">
                   <label className="text-xl">Category:</label>
-                  <form action="">
                     <select name="" id="" className="w-full p-2 rounded border-2 border-gray-200 hover:border-(--primaryColor) cursor-pointer">
                       <option value="" className="">Public</option>
                       <option value="" className="">Buying and selling</option>
                       <option value="" className="">Services</option>
                       <option value="" className="">Events</option>
                     </select>
-                  </form>
                 </div>
               </div>
 
@@ -170,7 +178,7 @@ export default function CreatPostPage() {
 
             </div>
             <div className="flex items-center justify-center gap-3">
-              <button className="text-xl w-full cursor-pointer mt-6  hover:text-white py-2 rounded-md transition border-2 border-red-600 hover:bg-red-600">Cancel</button>
+              <button onClick={cancelHandler} type="button" className="text-xl w-full cursor-pointer mt-6  hover:text-white py-2 rounded-md transition border-2 border-red-600 hover:bg-red-600">Cancel</button>
               <button className="text-xl w-full cursor-pointer mt-6  hover:text-white py-2 rounded-md transition border-2 border-(--primaryColor) hover:bg-(--primaryColor)">Submit</button>
             </div>
           </form>
