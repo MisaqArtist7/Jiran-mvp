@@ -30,17 +30,17 @@ const loginSchema = z.object({
       try{
         const response = await fetch('https://jiran-api.com/api/v1/auth/login', {
           method: 'POST',
-          body: JSON.stringify(data),
-          headers: { 'Content-Type': 'application/json', }
+          headers: { 'Content-Type': 'application/json', },
+          body: JSON.stringify(data)
         })
         if(!response.ok) {
-          const errorBody = await response.json();
-          console.log(errorBody);
-          return;
+            const errorBody = await response.json()
+            alert(errorBody.message || 'Login failed')
+            return
         }
           const result = await response.json()
-          router.push('/dashboard')
           const token = result.data.token
+          router.push('/dashboard')
           console.log(token)
           localStorage.setItem('token', token)
           console.log(result)

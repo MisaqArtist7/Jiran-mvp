@@ -2,7 +2,7 @@
 :root {
   --background: rgb(247, 244, 244) ;  /* FCEFE9 F7F7FC*/
   --primaryColor: #007BFF; /* Titles/Links 007BFF */
-  --navy: #343A40; /* Text */
+  --text: #343A40; /* Text */
   --coolGray: #CED4DA; /* Disable Text */
   --coralRed: #FF6B6B; /* Errors */
   --linearBlack: linear-gradient(111deg, #000000, #007BFF); /* Black to Gray */

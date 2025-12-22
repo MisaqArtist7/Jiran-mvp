@@ -1,9 +1,37 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
 export default function CreatPostPage() {
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+  const [latitude, setLatitude] = useState('')
+  const [longitude, setLongitude] = useState('')
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://jiran-api.com/api/v1/auth/show', 
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            }
+          })
+        if (!response.ok) throw new Error('Something went wrong')
+          const data = await response.json()
+          const userData = data.data
+          setLatitude(String(userData['loc-lat'])) 
+          setLongitude(String(userData['loc-lng']))
+          console.log(data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchData()
+  }, [])
+
   const [preview, setPreview] = useState<string | null>(null);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -13,9 +41,34 @@ export default function CreatPostPage() {
     const url = URL.createObjectURL(file);
     setPreview(url);
   };
+  const handleSubmit = async () => {
+    const token = localStorage.getItem('token')
+    const formData = new FormData()
+    formData.append('title', title)
+    formData.append('content', description)
+    formData.append('latitude', latitude)
+    formData.append('longitude', longitude)
+    try {
+      const sendData = async () => {
+        const response = await fetch('https://jiran-api.com/api/v1/create-post', 
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: formData
+          })
+        if(!response.ok) throw new Error('something went wrong')
+        }
+        sendData()
+      } catch(error) {
+        console.log(error)
+      }
+  }
 
   return (
-    <section className=''>
+    <section>
       <div>
         <aside className="shadow bg-white border border-gray-100 min-w-72 px-4 py-7 fixed left-0 bottom-0 top-0">
           <div>
@@ -56,7 +109,7 @@ export default function CreatPostPage() {
         </aside>
 
         <div className="bg-white shadow p-3 mx-3 ml-76">
-          <form>
+          <form onSubmit={handleSubmit}>
             <legend className="p-3 text-2xl font-semibold">Add post</legend>
 
             <div className="flex items-center justify-between w-full gap-4">
@@ -67,6 +120,7 @@ export default function CreatPostPage() {
                   <label className="text-xl">Title:</label>
                   <input
                     type="text"
+                    onChange={(e) => setTitle(e.target.value)}
                     className="w-full p-2 rounded border-2 border-gray-200 hover:border-(--primaryColor)"
                     placeholder="for example: car"
                   />
@@ -76,6 +130,8 @@ export default function CreatPostPage() {
                   <label className="text-xl">Description:</label>
                   <textarea
                     rows={4}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                     placeholder="for example: my car is blue and the model is BMW..."
                     className="w-full p-2 rounded border-2 border-gray-200 hover:border-(--primaryColor)"
                   ></textarea>

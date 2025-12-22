@@ -6,7 +6,7 @@ export default function HeaderComponent() {
       <nav className="flex items-center justify-between gap-3 text-gray-800">
         <div className="flex items-center gap-4">
           <Image src='images/Logo.svg' width={77} height={33} alt="" className="w-auto h-auto object-cover" />
-          <a href="">Home feed</a>
+          <a href="">Home-feed</a>
           <div>
             <form action="">
               <div className="flex items-center justify-between gap-2 border border-gray-500 rounded-full p-2">

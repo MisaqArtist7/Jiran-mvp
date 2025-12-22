@@ -147,7 +147,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Submit */}
-        <button type="submit" disabled={pending} className={`w-full cursor-pointer mt-6 text-white py-2 rounded-md transition ${pending ? 'bg-(--primaryColor)/70 cursor-not-allowed' : 'bg-(--primaryColor) cursor-not-allowed'}`}>
+        <button type="submit" disabled={pending} className={`w-full cursor-pointer mt-6 text-white py-2 rounded-md transition ${pending ? 'bg-(--primaryColor)/70 cursor-not-allowed' : 'bg-(--primaryColor)'}`}>
             {pending ? 'pending...' : 'sign up'}
         </button>
 
