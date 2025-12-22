@@ -69,13 +69,17 @@ export default function CreatPostPage() {
         console.log(error)
       }
   }
-  const cancelHandler = () => {
-    setTitle('')
-    setDescription('')
-    setLatitude('')
-    setLongitude('')
-    setPreview(null)
-  }
+  const [resetKey, setResetKey] = useState(0);
+    const cancelHandler = () => {
+      if (preview) URL.revokeObjectURL(preview);
+      setTitle('');
+      setDescription('');
+      setLatitude('');
+      setLongitude('');
+      setFile(null);
+      setPreview(null);   
+      setResetKey(prev => prev + 1);
+    };
   return (
     <section>
       <div>
@@ -158,13 +162,20 @@ export default function CreatPostPage() {
               </div>
 
               {/* right side — image preview */}
-              <div className="w-full flex-col-center gap-1">
-                
-                <div className="w-full h-48  overflow-hidden">
+              <div key={resetKey} className="w-full flex-col-center gap-1">
+                <div className="w-full h-48 overflow-hidden flex items-center justify-center">
                   {preview ? (
-                    <Image src={preview} width={202} height={202} alt="preview" className="h-full w-full object-contain" />
+                    <Image
+                      src={preview}
+                      width={202}
+                      height={202}
+                      alt="preview"
+                      className="h-full w-full object-contain"
+                    />
                   ) : (
-                    <span className="text-gray-500 flex-row-center h-full w-full">No picture has chosen yet</span>
+                    <span className="text-gray-500 flex items-center justify-center h-full w-full">
+                      No picture has been chosen yet
+                    </span>
                   )}
                 </div>
 
@@ -175,7 +186,6 @@ export default function CreatPostPage() {
                   className="block flex-row-center p-2 rounded border-2 border-gray-200 hover:border-(--primaryColor) my-3 cursor-alias"
                 />
               </div>
-
             </div>
             <div className="flex items-center justify-center gap-3">
               <button onClick={cancelHandler} type="button" className="text-xl w-full cursor-pointer mt-6  hover:text-white py-2 rounded-md transition border-2 border-red-600 hover:bg-red-600">Cancel</button>
